@@ -1,6 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { serviceClient } from "./helpers";
-import { hasCredentials } from "./helpers";
+import { hasCredentials, serviceClient } from "./helpers";
 
 /**
  * Esta suite verifica que la restricción EXCLUDE USING gist de la tabla
@@ -11,7 +10,7 @@ import { hasCredentials } from "./helpers";
  * restricción de integridad directamente. RLS se testea por separado.
  */
 describe.skipIf(!hasCredentials)("Anti-doble-reserva (restricción EXCLUDE)", () => {
-  const db = serviceClient();
+  let db: ReturnType<typeof serviceClient>;
 
   // IDs que vamos a crear y limpiar al final
   let testOwnerId: string;
@@ -21,6 +20,8 @@ describe.skipIf(!hasCredentials)("Anti-doble-reserva (restricción EXCLUDE)", ()
   let testCustomerId: string;
 
   beforeAll(async () => {
+    db = serviceClient();
+
     // 1) Crear usuario de prueba vía Admin API
     const email = `test-anti-${Date.now()}@reservibes-test.local`;
     const { data: userData, error: userError } = await db.auth.admin.createUser({
@@ -95,6 +96,7 @@ describe.skipIf(!hasCredentials)("Anti-doble-reserva (restricción EXCLUDE)", ()
   }, 30000);
 
   afterAll(async () => {
+    if (!db) return;
     // Limpieza en orden inverso por las foreign keys
     if (testBusinessId) {
       await db.from("bookings").delete().eq("business_id", testBusinessId);
