@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { serviceClient } from "./helpers";
+import { hasCredentials } from "./helpers";
 
 /**
  * Esta suite verifica que la restricción EXCLUDE USING gist de la tabla
@@ -9,7 +10,7 @@ import { serviceClient } from "./helpers";
  * Usamos service_role porque ignora RLS y nos permite testear la
  * restricción de integridad directamente. RLS se testea por separado.
  */
-describe("Anti-doble-reserva (restricción EXCLUDE)", () => {
+describe.skipIf(!hasCredentials)("Anti-doble-reserva (restricción EXCLUDE)", () => {
   const db = serviceClient();
 
   // IDs que vamos a crear y limpiar al final
