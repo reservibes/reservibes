@@ -10,6 +10,9 @@ export default defineConfig({
     setupFiles: ["./tests/setup.ts"],
     include: ["tests/**/*.{test,spec}.{ts,tsx}"],
     passWithNoTests: true,
+    // Los tests de integración tocan red → más timeout
+    testTimeout: 30000,
+    hookTimeout: 30000,
   },
   resolve: {
     alias: {
