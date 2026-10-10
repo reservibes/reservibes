@@ -1,0 +1,25 @@
+name: Supabase Keep Alive
+
+on:
+  schedule:
+    - cron: "0 12 * * *"
+  workflow_dispatch:
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping Supabase (dev)
+        run: |
+          curl -s -o /dev/null -w "%{http_code}" \
+            "${{ secrets.SUPABASE_DEV_URL }}/rest/v1/" \
+            -H "apikey: ${{ secrets.SUPABASE_DEV_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_DEV_ANON_KEY }}"
+
+      - name: Ping Supabase (prod)
+        run: |
+          curl -s -o /dev/null -w "%{http_code}" \
+            "${{ secrets.SUPABASE_PROD_URL }}/rest/v1/" \
+            -H "apikey: ${{ secrets.SUPABASE_PROD_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_PROD_ANON_KEY }}"
