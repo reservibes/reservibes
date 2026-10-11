@@ -1,14 +1,35 @@
 "use client";
 
+import { useState } from "react";
+import { Button } from "@/ui/components/primitives/button";
+import { Badge } from "@/ui/components/primitives/badge";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/ui/components/primitives/card";
+import { Input } from "@/ui/components/primitives/input";
+import { Textarea } from "@/ui/components/primitives/textarea";
+import { FormField } from "@/ui/components/primitives/form-field";
+import { Skeleton } from "@/ui/components/primitives/skeleton";
+import { Avatar } from "@/ui/components/primitives/avatar";
+import { Dialog } from "@/ui/components/primitives/dialog";
+import { BottomSheet } from "@/ui/components/primitives/bottom-sheet";
 import { useTheme } from "@/ui/theme/theme-provider";
 
 export default function Home() {
   const { theme, toggleTheme } = useTheme();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const [showError, setShowError] = useState(false);
 
   return (
-    <main className="min-h-screen">
-      {/* Header */}
-      <header className="border-b border-border bg-surface">
+    <main className="min-h-screen pb-20">
+      <header className="border-b border-border bg-surface sticky top-0 z-10">
         <div className="mx-auto max-w-5xl px-4 py-4 flex items-center justify-between">
           <span
             className="text-xl tracking-tight"
@@ -16,81 +37,226 @@ export default function Home() {
           >
             RESERVIBES
           </span>
-          <button
-            onClick={toggleTheme}
-            className="rounded-md border border-border px-3 py-2 text-sm hover:bg-surface-2 transition-colors"
-          >
+          <Button variant="ghost" size="sm" onClick={toggleTheme}>
             {theme === "light" ? "Modo oscuro" : "Modo claro"}
-          </button>
+          </Button>
         </div>
       </header>
 
-      {/* Hero demo */}
-      <section className="mx-auto max-w-5xl px-4 py-20">
-        <p className="text-sm font-medium uppercase tracking-widest text-accent mb-4">
-          Sistema de diseño
+      <section className="mx-auto max-w-5xl px-4 py-16 space-y-16">
+        <div>
+          <Badge variant="accent" className="mb-4">
+            Sistema de diseño
+          </Badge>
+          <h1
+            className="text-5xl md:text-6xl font-black leading-tight mb-6 max-w-3xl"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Componentes primitivos.
+          </h1>
+        </div>
+
+        {/* Botones */}
+        <div>
+          <h2 className="text-2xl mb-4" style={{ fontFamily: "var(--font-display)" }}>
+            Botones
+          </h2>
+          <div className="flex flex-wrap gap-3 items-center">
+            <Button>Crear cuenta</Button>
+            <Button variant="secondary">Secundario</Button>
+            <Button variant="outline">Outline</Button>
+            <Button variant="ghost">Ghost</Button>
+            <Button variant="danger">Eliminar</Button>
+            <Button variant="link">Ver más</Button>
+            <Button disabled>Deshabilitado</Button>
+          </div>
+        </div>
+
+        {/* Badges */}
+        <div>
+          <h2 className="text-2xl mb-4" style={{ fontFamily: "var(--font-display)" }}>
+            Badges
+          </h2>
+          <div className="flex flex-wrap gap-3">
+            <Badge>Default</Badge>
+            <Badge variant="accent">Nueva</Badge>
+            <Badge variant="success">Confirmada</Badge>
+            <Badge variant="warning">Pendiente</Badge>
+            <Badge variant="error">Cancelada</Badge>
+            <Badge variant="outline">Outline</Badge>
+          </div>
+        </div>
+
+        {/* Inputs */}
+        <div>
+          <h2 className="text-2xl mb-4" style={{ fontFamily: "var(--font-display)" }}>
+            Formularios
+          </h2>
+          <div className="max-w-md space-y-5">
+            <FormField
+              label="Nombre del comercio"
+              htmlFor="nombre"
+              required
+              hint="Así aparecerá en tu Booking Page."
+            >
+              <Input
+                id="nombre"
+                placeholder="Barbería El Rey"
+                value={inputValue}
+                onChange={(e) => {
+                  setInputValue(e.target.value);
+                  setShowError(e.target.value.length > 0 && e.target.value.length < 3);
+                }}
+                invalid={showError}
+              />
+            </FormField>
+
+            <FormField
+              label="Email"
+              htmlFor="email"
+              required
+              error={showError ? "El nombre debe tener al menos 3 caracteres." : undefined}
+            >
+              <Input id="email" type="email" placeholder="hola@ejemplo.com" />
+            </FormField>
+
+            <FormField label="Descripción" htmlFor="desc">
+              <Textarea
+                id="desc"
+                placeholder="Contanos sobre tu comercio..."
+                maxLength={200}
+              />
+            </FormField>
+          </div>
+        </div>
+
+        {/* Avatares */}
+        <div>
+          <h2 className="text-2xl mb-4" style={{ fontFamily: "var(--font-display)" }}>
+            Avatares
+          </h2>
+          <div className="flex items-center gap-4">
+            <Avatar name="Juan Pérez" size="sm" />
+            <Avatar name="María López" size="md" />
+            <Avatar name="Carlos Ruiz" size="lg" />
+            <Avatar name="Ana García" size="xl" />
+            <Avatar name="Sin Foto" size="md" />
+          </div>
+        </div>
+
+        {/* Skeleton */}
+        <div>
+          <h2 className="text-2xl mb-4" style={{ fontFamily: "var(--font-display)" }}>
+            Skeleton (estado de carga)
+          </h2>
+          <Card>
+            <div className="flex items-center gap-3 mb-4">
+              <Skeleton className="h-12 w-12 rounded-full" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-3 w-3/4" />
+              </div>
+            </div>
+            <Skeleton className="h-3 w-full mb-2" />
+            <Skeleton className="h-3 w-5/6" />
+          </Card>
+        </div>
+
+        {/* Cards */}
+        <div>
+          <h2 className="text-2xl mb-4" style={{ fontFamily: "var(--font-display)" }}>
+            Cards
+          </h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Corte de cabello</CardTitle>
+                <CardDescription>30 minutos · $12.500</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-fg-muted">
+                  Servicio clásico con lavado y peinado incluido.
+                </p>
+              </CardContent>
+              <CardFooter>
+                <Button variant="ghost" size="sm">
+                  Cancelar
+                </Button>
+                <Button size="sm">Reservar</Button>
+              </CardFooter>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Barba completa</CardTitle>
+                <CardDescription>20 minutos · $8.000</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-fg-muted">
+                  Perfilado y afeitado con toalla caliente.
+                </p>
+              </CardContent>
+              <CardFooter>
+                <Button size="sm">Reservar</Button>
+              </CardFooter>
+            </Card>
+          </div>
+        </div>
+
+        {/* Overlays */}
+        <div>
+          <h2 className="text-2xl mb-4" style={{ fontFamily: "var(--font-display)" }}>
+            Dialog / BottomSheet
+          </h2>
+          <div className="flex flex-wrap gap-3">
+            <Button onClick={() => setDialogOpen(true)}>Abrir Dialog</Button>
+            <Button variant="outline" onClick={() => setSheetOpen(true)}>
+              Abrir BottomSheet
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Dialog de ejemplo */}
+      <Dialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        title="Confirmar reserva"
+        description="Vas a reservar un turno para el martes 14:30."
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={() => setDialogOpen(false)}>Confirmar</Button>
+          </>
+        }
+      >
+        <p className="text-sm text-fg-muted">
+          Revisá los detalles antes de confirmar. Se te enviará un email con
+          la información del turno.
         </p>
-        <h1
-          className="text-5xl md:text-6xl font-black leading-tight mb-6 max-w-3xl"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          Tu comercio, con reservas online en minutos.
-        </h1>
-        <p className="text-lg text-fg-muted max-w-2xl mb-8">
-          Esta es una página de prueba del sistema de diseño. Los colores, la
-          tipografía y los componentes que ves acá son los que usaremos en toda
-          la plataforma.
-        </p>
+      </Dialog>
 
-        <div className="flex flex-wrap gap-3">
-          <button className="rounded-md bg-accent px-5 py-3 font-medium text-accent-foreground shadow-accent hover:bg-accent-hover transition-colors">
-            Crear mi cuenta
-          </button>
-          <button className="rounded-md border-2 border-fg px-5 py-3 font-medium hover:bg-fg hover:text-fg-inverted transition-colors">
-            Ver demo
-          </button>
+      {/* BottomSheet de ejemplo */}
+      <BottomSheet
+        open={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        title="Elegí un horario"
+        footer={
+          <Button className="w-full" onClick={() => setSheetOpen(false)}>
+            Confirmar
+          </Button>
+        }
+      >
+        <div className="grid grid-cols-3 gap-2">
+          {["09:00", "09:30", "10:00", "10:30", "11:00", "11:30"].map((h) => (
+            <Button key={h} variant="outline" size="sm">
+              {h}
+            </Button>
+          ))}
         </div>
-      </section>
-
-      {/* Paleta de muestra */}
-      <section className="mx-auto max-w-5xl px-4 pb-20">
-        <h2 className="text-2xl mb-6" style={{ fontFamily: "var(--font-display)" }}>
-          Paleta
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Swatch label="Acento" className="bg-accent" />
-          <Swatch label="Fondo" className="bg-bg border border-border" />
-          <Swatch label="Superficie" className="bg-surface border border-border" />
-          <Swatch label="Superficie 2" className="bg-surface-2" />
-          <Swatch label="Texto" className="bg-fg" />
-          <Swatch label="Texto muted" className="bg-fg-muted" />
-          <Swatch label="Éxito" className="bg-success" />
-          <Swatch label="Error" className="bg-error" />
-        </div>
-      </section>
-
-      {/* Tipografía de muestra */}
-      <section className="mx-auto max-w-5xl px-4 pb-20">
-        <h2 className="text-2xl mb-6" style={{ fontFamily: "var(--font-display)" }}>
-          Tipografía
-        </h2>
-        <div className="space-y-4 rounded-lg border border-border bg-surface p-6">
-          <p style={{ fontFamily: "var(--font-display)" }} className="text-4xl">
-            Archivo Black — Display
-          </p>
-          <p className="text-lg">Inter — UI y cuerpo. Legible en mobile.</p>
-          <p className="font-mono text-lg tabular">$ 12.500,00 — JetBrains Mono</p>
-        </div>
-      </section>
+      </BottomSheet>
     </main>
-  );
-}
-
-function Swatch({ label, className }: { label: string; className: string }) {
-  return (
-    <div>
-      <div className={`h-20 rounded-lg ${className}`} />
-      <p className="mt-2 text-sm text-fg-muted">{label}</p>
-    </div>
   );
 }

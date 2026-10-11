@@ -57,3 +57,37 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-accent: var(--shadow-accent);
 }
+@plugin "tailwindcss-animate";
+
+/* =============================================================================
+   SKELETON SHIMMER
+   =============================================================================
+   Gradiente que recorre el skeleton de izquierda a derecha. Se ve mejor
+   que animate-pulse y es lo que usan las apps modernas.
+   ============================================================================= */
+
+@keyframes reservibes-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.reservibes-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-3) 0%,
+    var(--color-border-strong) 50%,
+    var(--color-surface-3) 100%
+  );
+  background-size: 200% 100%;
+  animation: reservibes-shimmer 1.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reservibes-skeleton {
+    animation: none;
+  }
+}
