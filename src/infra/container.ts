@@ -1,14 +1,16 @@
 import type { AuthProvider } from "@/core/ports/auth-provider.port";
 import type { EmailProvider } from "@/core/ports/email-provider.port";
+import type { PasswordRecoveryRepository } from "@/core/ports/password-recovery-repository.port";
 import { SupabaseAuthAdapter } from "@/infra/auth/supabase-auth.adapter";
+import { SupabasePasswordRecoveryRepository } from "@/infra/auth/supabase-password-recovery.repository";
 import { ResendEmailAdapter } from "@/infra/email/resend.adapter";
 import { createBrowserSupabaseClient } from "@/infra/supabase/browser";
 import { createServerSupabaseClient } from "@/infra/supabase/server";
+import { createAdminSupabaseClient } from "@/infra/supabase/admin";
 
 /**
  * Contenedor de dependencias. Es el ÚNICO archivo que sabe qué adaptador
- * concreto está activo. Si mañana cambiamos de proveedor, solo se toca este
- * archivo.
+ * concreto está activo.
  */
 
 // -----------------------------------------------------------------------------
@@ -34,10 +36,6 @@ export async function getServerAuthProvider(): Promise<AuthProvider> {
 // Email
 // -----------------------------------------------------------------------------
 
-/**
- * Devuelve el EmailProvider para usar en el servidor.
- * Falla rápido si falta configuración, para no arrancar con email roto.
- */
 export function getServerEmailProvider(): EmailProvider {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM;
@@ -54,4 +52,13 @@ export function getServerEmailProvider(): EmailProvider {
   }
 
   return new ResendEmailAdapter(apiKey, from);
+}
+
+// -----------------------------------------------------------------------------
+// Password Recovery
+// -----------------------------------------------------------------------------
+
+export function getServerPasswordRecoveryRepository(): PasswordRecoveryRepository {
+  const admin = createAdminSupabaseClient();
+  return new SupabasePasswordRecoveryRepository(admin);
 }
